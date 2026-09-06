@@ -22,6 +22,8 @@ const nextConfig: NextConfig = {
       { hostname: "i.ibb.co" },
       { protocol: "http", hostname: "localhost", port: "5000" },
       { protocol: "http", hostname: "localhost", port: "3000" },
+      { protocol: "https", hostname: "madar-iphone-backend.vercel.app" },
+      { protocol: "https", hostname: "**.vercel.app" },
       { protocol: "https", hostname: "**.railway.app" },
       { protocol: "https", hostname: "**.render.com" },
       { protocol: "https", hostname: "**.onrender.com" },
