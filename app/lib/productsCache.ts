@@ -12,7 +12,7 @@ export const getAllProducts = unstable_cache(
     return Array.isArray(data) ? data : [];
   },
   ["all-products"],
-  { tags: [PRODUCTS_TAG], revalidate: false }
+  { tags: [PRODUCTS_TAG], revalidate: 60 }
 );
 
 export async function getProductById(id: string) {

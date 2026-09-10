@@ -47,7 +47,7 @@ export default function CategoryPageClient({ slug }: { slug: string }) {
   useEffect(() => {
     const brand = config?.filters.brand ?? "";
     const query = brand ? `?brand=${encodeURIComponent(brand)}` : "";
-    fetch(`${API}/api/products${query}`)
+    fetch(`/api/products${query}`)
       .then((r) => r.json())
       .then((data: Product[]) => setRawProducts(sortProducts(filterProducts(data, slug))))
       .catch(console.error)
