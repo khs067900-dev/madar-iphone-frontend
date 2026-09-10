@@ -8,6 +8,7 @@ import { Smartphone, Truck, ShieldCheck, Zap, ChevronLeft } from "lucide-react";
 import AnimatedBackground from "../../components/AnimatedBackground";
 
 const iphoneCards = [
+  { label: "آيفون 18", href: "/smartphones/iphone-18", image: "/06550573-067f-4102-8bf9-0e0c02236776.webp", imageStyle: "object-top scale-125" },
   { label: "آيفون 17 برو ماكس", href: "/smartphones/iphone-17-pro-max", image: "/iphone17.webp" },
   { label: "آيفون 17 برو", href: "/smartphones/iphone-17-pro", image: "/i17pro.webp" },
   { label: "آيفون 17 Air", href: "/smartphones/iphone-17-air", image: "/i17air.webp" },
@@ -30,7 +31,7 @@ const samsungCards = [
   { label: "سامسونج S22 الترا", href: "/smartphones/samsung-s22-ultra", image: "/s22.webp" },
 ];
 
-function PhoneCard({ card }: { card: { label: string; href: string; image: string } }) {
+function PhoneCard({ card }: { card: { label: string; href: string; image: string; imageStyle?: string } }) {
   return (
     <Link
       href={card.href}
@@ -40,7 +41,7 @@ function PhoneCard({ card }: { card: { label: string; href: string; image: strin
         src={card.image}
         alt={card.label}
         fill
-        className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
+        className={`object-cover transition-transform duration-700 group-hover:scale-110 ${card.imageStyle ?? "object-center group-hover:scale-105"}`}
         style={{ willChange: "transform" }}
         unoptimized
       />

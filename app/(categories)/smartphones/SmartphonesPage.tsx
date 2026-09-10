@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 
 const iphoneCards = [
+  { label: "آيفون 18", href: "/smartphones/iphone-18", image: "/06550573-067f-4102-8bf9-0e0c02236776.webp" },
   { label: "آيفون 17 برو ماكس", href: "/smartphones/iphone-17-pro-max", image: "/phones/iphone-17-pro-max.webp" },
   { label: "آيفون 17 برو", href: "/smartphones/iphone-17-pro", image: "/phones/iphone-17-pro.webp" },
   { label: "آيفون 17 Air", href: "/smartphones/iphone-17-air", image: "/phones/iphone-17-air.webp" },
