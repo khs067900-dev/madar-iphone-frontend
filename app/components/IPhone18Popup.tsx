@@ -2,9 +2,9 @@
 import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 
-// ─── تاريخ الإطلاق — غيّره هنا ───────────────────────────────────────────────
-const LAUNCH_DATE = new Date("2026-09-12T10:00:00+03:00");
-// ─────────────────────────────────────────────────────────────────────────────
+const LAUNCH_DATE = new Date(
+  process.env.NEXT_PUBLIC_IPHONE18_RESERVATION_DATE ?? "2026-09-12T23:00:00+03:00"
+);
 
 const POPUP_KEY = "popup_shown";
 
@@ -37,6 +37,7 @@ export default function IPhone18Popup() {
   const { d, h, m, s } = useCountdown(LAUNCH_DATE);
 
   useEffect(() => {
+    if (Date.now() >= LAUNCH_DATE.getTime()) return; // التاريخ عدى → ما نعرضش
     if (sessionStorage.getItem(POPUP_KEY)) return;
     const t = setTimeout(() => {
       sessionStorage.setItem(POPUP_KEY, "1");
