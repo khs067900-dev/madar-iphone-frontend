@@ -7,6 +7,8 @@ const RESERVATION_DATE = new Date(
   process.env.NEXT_PUBLIC_IPHONE18_RESERVATION_DATE ?? "2026-09-12T23:00:00+03:00"
 );
 
+const isOver = Date.now() >= RESERVATION_DATE.getTime();
+
 const SLIDES = [
   "/06550573-067f-4102-8bf9-0e0c02236776.webp",
   "/df3a0f08-fb1c-4b40-863c-58f8f562805d.webp",
@@ -14,8 +16,6 @@ const SLIDES = [
 ];
 
 export default function IPhone18Page() {
-  const isOver = Date.now() >= RESERVATION_DATE.getTime();
-
   if (!isOver) {
     return (
       <ComingSoon
