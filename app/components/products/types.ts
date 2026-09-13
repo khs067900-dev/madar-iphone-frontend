@@ -50,6 +50,27 @@ export interface Product {
     code: string;
   }[];
   features?: string[];
+  variants?: {
+    name: string;
+    color: string;
+    colorCode: string;
+    defaultStorage: string;
+    images: string[];
+    storageOptions: { storage: string; originalPrice: number; salePrice: number }[];
+  }[];
+  specGroups?: {
+    group: string;
+    items: { key: string; value: string }[];
+  }[];
+  sections?: {
+    type: string;
+    title: string;
+    subtitle?: string;
+    content: Record<string, unknown>;
+    media?: { type: string; url: string; alt: string; sortOrder: number }[];
+    sortOrder: number;
+    isActive: boolean;
+  }[];
   freeDelivery: boolean;
   deliveryTime: string;
   warrantyYears: number;

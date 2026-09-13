@@ -11,16 +11,19 @@ import {
   IoFlash,
   IoCarOutline,
   IoShieldCheckmarkOutline,
+  IoInformationCircleOutline,
+  IoCalendarOutline,
 } from "react-icons/io5";
 import type { Product } from "./types";
 import { useCartStore } from "../../store/cartStore";
+import PreOrderModal from "../pre-order/PreOrderModal";
 
 const fmt = (n: number) => n.toLocaleString("en-US");
 const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 const resolveImg = (src: string) =>
   src.startsWith("http") ? src : `${API}${src.startsWith("/") ? src : "/" + src}`;
 
-export default function ProductCard({ product, priority = false }: { product: Product; priority?: boolean }) {
+export default function ProductCard({ product, priority = false, reserveMode = false }: { product: Product; priority?: boolean; reserveMode?: boolean }) {
   const { name, discountPercent = 0, brand, color, storage, inStock, installment, freeDelivery, warrantyYears } = product;
   const image = product.images?.[0] || product.image;
   const resolvedImage = image ? resolveImg(image) : undefined;
@@ -34,6 +37,19 @@ export default function ProductCard({ product, priority = false }: { product: Pr
   const router = useRouter();
   const [added, setAdded] = useState(false);
   const [toast, setToast] = useState(false);
+  const [preOrderOpen, setPreOrderOpen] = useState(false);
+  const [fullProduct, setFullProduct] = useState<Product | null>(null);
+
+  const handleReserveClick = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!fullProduct) {
+      const res = await fetch(`/api/products/${product._id}`);
+      const data = await res.json();
+      setFullProduct(data);
+    }
+    setPreOrderOpen(true);
+  };
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -66,15 +82,27 @@ export default function ProductCard({ product, priority = false }: { product: Pr
         )}
       </AnimatePresence>
 
+      <PreOrderModal
+        open={preOrderOpen}
+        onClose={() => setPreOrderOpen(false)}
+        product={{
+          _id: (fullProduct ?? product)._id,
+          name: (fullProduct ?? product).name,
+          image: (fullProduct ?? product).images?.[0] || (fullProduct ?? product).image,
+          variants: (fullProduct ?? product).variants ?? [],
+          price: (fullProduct ?? product).salePrice ?? (fullProduct ?? product).originalPrice ?? (fullProduct ?? product).price ?? 0,
+        }}
+      />
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}
         className="relative h-full"
       >
-        <Link
-          href={`/product/${product._id}`}
-          className="group relative flex flex-col h-full bg-black/40 backdrop-blur-md rounded-[22px] overflow-hidden card-shadow"
+        <div
+          onClick={() => router.push(`/product/${product._id}`)}
+          className="group relative flex flex-col h-full bg-black/40 backdrop-blur-md rounded-[22px] overflow-hidden card-shadow cursor-pointer"
           dir="rtl"
         >
 
@@ -125,12 +153,12 @@ export default function ProductCard({ product, priority = false }: { product: Pr
 
             {/* Product image */}
             {resolvedImage ? (
-              <div className="absolute inset-0 flex items-center justify-center">
+              <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
                 <Image
                   src={resolvedImage}
                   alt={name}
                   fill
-                  className="object-contain p-4 sm:p-6"
+                  className="object-contain p-4 sm:p-6 scale-150"
                   sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                   priority={priority}
                   loading={priority ? "eager" : "lazy"}
@@ -220,43 +248,63 @@ export default function ProductCard({ product, priority = false }: { product: Pr
               </div>
             )}
 
-            {/* Cart button */}
-            <motion.button
-              onClick={handleAddToCart}
-              whileTap={{ scale: 0.97 }}
-              className={`cart-btn ${added ? "added" : ""}`}
-            >
-              <AnimatePresence mode="wait" initial={false}>
-                {added ? (
-                  <motion.span
-                    key="done"
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -8 }}
-                    transition={{ duration: 0.18 }}
-                    className="flex items-center gap-2"
-                  >
-                    <IoCheckmarkCircle size={16} />
-                    تمت الإضافة
-                  </motion.span>
-                ) : (
-                  <motion.span
-                    key="add"
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -8 }}
-                    transition={{ duration: 0.18 }}
-                    className="flex items-center gap-2"
-                  >
-                    <IoCartOutline size={16} />
-                    أضف للسلة
-                  </motion.span>
-                )}
-              </AnimatePresence>
-            </motion.button>
+            {/* Cart button / Reserve buttons */}
+            {reserveMode ? (
+              <div className="flex gap-2">
+                <Link
+                  href={`/product/${product._id}`}
+                  onClick={(e) => e.stopPropagation()}
+                  className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-white/10 border border-white/20 text-xs font-bold text-white hover:bg-teal-500/20 hover:border-teal-400 hover:text-teal-300 transition-all"
+                >
+                  <IoInformationCircleOutline size={15} />
+                  تفاصيل المنتج
+                </Link>
+                <button
+                  onClick={handleReserveClick}
+                  className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-gradient-to-br from-teal-500 to-emerald-500 text-xs font-bold text-white hover:opacity-90 transition-all shadow-lg shadow-teal-500/30"
+                >
+                  <IoCalendarOutline size={15} />
+                  احجز الآن
+                </button>
+              </div>
+            ) : (
+              <motion.button
+                onClick={handleAddToCart}
+                whileTap={{ scale: 0.97 }}
+                className={`cart-btn ${added ? "added" : ""}`}
+              >
+                <AnimatePresence mode="wait" initial={false}>
+                  {added ? (
+                    <motion.span
+                      key="done"
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -8 }}
+                      transition={{ duration: 0.18 }}
+                      className="flex items-center gap-2"
+                    >
+                      <IoCheckmarkCircle size={16} />
+                      تمت الإضافة
+                    </motion.span>
+                  ) : (
+                    <motion.span
+                      key="add"
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -8 }}
+                      transition={{ duration: 0.18 }}
+                      className="flex items-center gap-2"
+                    >
+                      <IoCartOutline size={16} />
+                      أضف للسلة
+                    </motion.span>
+                  )}
+                </AnimatePresence>
+              </motion.button>
+            )}
 
           </div>
-        </Link>
+        </div>
       </motion.div>
     </>
   );

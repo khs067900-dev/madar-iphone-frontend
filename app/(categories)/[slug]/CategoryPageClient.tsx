@@ -142,6 +142,7 @@ export default function CategoryPageClient({ slug }: { slug: string }) {
               page={page}
               onPageChange={setPage}
               emoji="📱"
+              reserveMode={slug === "iphone-18"}
             />
           </div>
         </div>

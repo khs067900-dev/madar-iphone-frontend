@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
+import PreOrderModal from "./pre-order/PreOrderModal";
 
 const LAUNCH_DATE = new Date(
   process.env.NEXT_PUBLIC_IPHONE18_RESERVATION_DATE ?? "2026-09-12T23:00:00+03:00"
@@ -34,10 +35,19 @@ function handleCTA() {
 
 export default function IPhone18Popup() {
   const [open, setOpen] = useState(false);
+  const [preOrderOpen, setPreOrderOpen] = useState(false);
+  const [iphone18Product, setIphone18Product] = useState<{ _id: string; name: string; image?: string; variants?: unknown[]; price: number } | null>(null);
   const { d, h, m, s } = useCountdown(LAUNCH_DATE);
+  const launched = d === 0 && h === 0 && m === 0 && s === 0;
 
   useEffect(() => {
-    if (Date.now() >= LAUNCH_DATE.getTime()) return; // التاريخ عدى → ما نعرضش
+    fetch("/api/products?category=%D8%A7%D8%A8%D9%84+%D8%A7%D9%8A%D9%81%D9%88%D9%86+18&limit=1")
+      .then(r => r.json())
+      .then(data => { const p = Array.isArray(data) ? data[0] : data?.products?.[0]; if (p) setIphone18Product({ _id: p._id, name: p.name, image: p.images?.[0] || p.image, variants: p.variants, price: p.salePrice ?? p.originalPrice ?? p.price ?? 0 }); })
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
     if (sessionStorage.getItem(POPUP_KEY)) return;
     const t = setTimeout(() => {
       sessionStorage.setItem(POPUP_KEY, "1");
@@ -45,6 +55,8 @@ export default function IPhone18Popup() {
     }, 1000);
     return () => clearTimeout(t);
   }, []);
+
+
 
   if (!open) return null;
 
@@ -115,35 +127,50 @@ export default function IPhone18Popup() {
           {/* فاصل */}
           <div className="pp-divider" />
 
-          {/* Countdown */}
-          <div className="pp-countdown-section">
-            <p className="pp-countdown-label">
-              <span className="pp-countdown-dot" />
-              الإطلاق الرسمي بعد
-            </p>
-            <div className="pp-timer">
-              {units.map(({ v, l }, i) => (
-                <div key={l} className="pp-timer-item">
-                  <div className="pp-unit">
-                    <span className="pp-num">{String(v).padStart(2, "0")}</span>
-                    <span className="pp-unit-lbl">{l}</span>
-                  </div>
-                  {i < 3 && <span className="pp-colon">:</span>}
+          {/* Countdown أو زرار الحجز */}
+          {!launched ? (
+            <>
+              <div className="pp-countdown-section">
+                <p className="pp-countdown-label">
+                  <span className="pp-countdown-dot" />
+                  الإطلاق الرسمي بعد
+                </p>
+                <div className="pp-timer">
+                  {units.map(({ v, l }, i) => (
+                    <div key={l} className="pp-timer-item">
+                      <div className="pp-unit">
+                        <span className="pp-num">{String(v).padStart(2, "0")}</span>
+                        <span className="pp-unit-lbl">{l}</span>
+                      </div>
+                      {i < 3 && <span className="pp-colon">:</span>}
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          </div>
-
-          {/* CTA */}
-          <button className="pp-cta" onClick={handleCTA}>
-            <span>سجّل اهتمامك الآن</span>
-            <span className="pp-cta-arrow">←</span>
-          </button>
-
-          <p className="pp-footnote">سيتم التواصل معك فور بدء الطلب المسبق</p>
+              </div>
+              <button className="pp-cta" onClick={handleCTA}>
+                <span>سجّل اهتمامك الآن</span>
+                <span className="pp-cta-arrow">←</span>
+              </button>
+              <p className="pp-footnote">سيتم التواصل معك فور بدء الطلب المسبق</p>
+            </>
+          ) : (
+            <>
+              <button className="pp-cta" onClick={() => setPreOrderOpen(true)}>
+                <span>احجز نسختك الآن</span>
+                <span className="pp-cta-arrow">←</span>
+              </button>
+              <p className="pp-footnote">بدفعة أولى رمزية · استلم فور الإطلاق · أولوية الحجز المبكر</p>
+            </>
+          )}
 
         </div>
       </div>
+
+      <PreOrderModal
+        open={preOrderOpen}
+        onClose={() => setPreOrderOpen(false)}
+        product={iphone18Product ?? { _id: "iphone18", name: "iPhone 18", variants: [], price: 0 }}
+      />
 
       <style>{`
         /* ══ Overlay ══ */

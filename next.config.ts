@@ -17,6 +17,7 @@ const nextConfig: NextConfig = {
     };
   },
   images: {
+    unoptimized: true,
     remotePatterns: [
       { hostname: "ibb.co" },
       { hostname: "i.ibb.co" },

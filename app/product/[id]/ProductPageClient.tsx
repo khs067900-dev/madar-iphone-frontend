@@ -3,14 +3,17 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { IoArrowForward, IoShareSocial, IoHomeOutline, IoChevronBack } from "react-icons/io5";
+import { IoArrowForward, IoShareSocial, IoHomeOutline, IoChevronBack, IoCalendarOutline } from "react-icons/io5";
 import Link from "next/link";
 import type { Product } from "../../components/products/types";
 import { useCartStore } from "../../store/cartStore";
 import ProductImages from "./components/ProductImages";
 import ProductInfo from "./components/ProductInfo";
 import ProductDetails from "./components/ProductDetails";
+import IPhone18Details from "./components/iPhone18Details";
 import AnimatedBackground from "../../components/AnimatedBackground";
+import { isIPhone18PreOrder } from "../../lib/usePreOrderAvailability";
+import PreOrderModal from "../../components/pre-order/PreOrderModal";
 
 
 const BACKEND = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
@@ -20,6 +23,8 @@ export default function ProductPageClient({ id }: { id: string }) {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [addedToCart, setAddedToCart] = useState(false);
+  const [variantImages, setVariantImages] = useState<string[] | null>(null);
+  const [preOrderOpen, setPreOrderOpen] = useState(false);
   const addItem = useCartStore((s) => s.addItem);
 
   useEffect(() => {
@@ -62,13 +67,16 @@ export default function ProductPageClient({ id }: { id: string }) {
   const resolveImg = (src: string) =>
     src.startsWith("http") ? src : src.startsWith("/uploads") ? src : `${BACKEND}${src}`;
   const merged = [...(product.images || []), ...(product.image ? [product.image] : [])];
-  const allImages = [...new Set(merged)].map(resolveImg);
+  const baseImages = [...new Set(merged)].map(resolveImg);
+  const allImages = variantImages ? variantImages.map(resolveImg) : baseImages;
 
   const handleShare = async () => {
     try {
       await navigator.share({ title: product.name, url: window.location.href });
     } catch {}
   };
+
+  const isPreOrder = product ? isIPhone18PreOrder(product.name) : false;
 
   return (
     <>
@@ -136,6 +144,8 @@ export default function ProductPageClient({ id }: { id: string }) {
               addedToCart={addedToCart}
               onAddToCart={(qty) => { addItem(product, qty); setAddedToCart(true); }}
               onBuyNow={(qty) => { addItem(product, qty); router.push("/cart"); }}
+              onVariantChange={(imgs) => setVariantImages(imgs)}
+              onPreOrder={isPreOrder ? () => setPreOrderOpen(true) : undefined}
             />
           </motion.div>
         </div>
@@ -147,14 +157,22 @@ export default function ProductPageClient({ id }: { id: string }) {
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.6 }}
         >
-          <ProductDetails
-            description={product.description}
-            specs={product.specs}
-            gallery={product.gallery}
-            specifications={product.specifications}
-            rating={product.rating}
-            reviews={product.reviews}
-          />
+          {product.sections && product.sections.length > 0 ? (
+            <IPhone18Details
+              description={product.description}
+              specGroups={product.specGroups}
+              sections={product.sections}
+            />
+          ) : (
+            <ProductDetails
+              description={product.description}
+              specs={product.specs}
+              gallery={product.gallery}
+              specifications={product.specifications}
+              rating={product.rating}
+              reviews={product.reviews}
+            />
+          )}
         </motion.div>
       </div>
 
@@ -177,7 +195,16 @@ export default function ProductPageClient({ id }: { id: string }) {
                   <span className="text-[11px] font-bold text-white/50">ر.س</span>
                 </div>
               </div>
-              {!addedToCart ? (
+              {product.category === "ابل ايفون 18" ? (
+                <motion.button
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setPreOrderOpen(true)}
+                  className="bg-gradient-to-r from-teal-500 to-emerald-500 text-white font-bold text-sm px-7 py-3.5 rounded-2xl shadow-lg shadow-teal-500/30 flex items-center gap-2"
+                >
+                  <IoCalendarOutline size={16} />
+                  احجز الآن
+                </motion.button>
+              ) : !addedToCart ? (
                 <motion.button
                   whileTap={{ scale: 0.95 }}
                   onClick={() => { addItem(product, 1); setAddedToCart(true); }}
@@ -198,6 +225,21 @@ export default function ProductPageClient({ id }: { id: string }) {
           </div>
         </motion.div>
       </AnimatePresence>
+
+      {/* ─── Pre-Order Modal ─── */}
+      {isPreOrder && (
+        <PreOrderModal
+          open={preOrderOpen}
+          onClose={() => setPreOrderOpen(false)}
+          product={{
+            _id: product._id,
+            name: product.name,
+            image: product.image,
+            variants: product.variants,
+            price: product.originalPrice ?? product.salePrice ?? 0,
+          }}
+        />
+      )}
     </main>
     </>
   );

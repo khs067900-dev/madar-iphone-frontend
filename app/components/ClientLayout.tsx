@@ -15,7 +15,7 @@ export default function ClientLayout({ children, footer }: { children: React.Rea
   return (
     <>
       <FingerprintInit />
-      {!hideChrome && <IPhone18Popup />}
+      {!hideChrome && pathname === "/" && <IPhone18Popup />}
       {!hideChrome && <Navbar />}
       {children}
       {!hideChrome && footer}

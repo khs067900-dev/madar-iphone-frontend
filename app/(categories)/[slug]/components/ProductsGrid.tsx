@@ -14,6 +14,7 @@ interface Props {
   page: number;
   onPageChange: (p: number) => void;
   emoji?: string;
+  reserveMode?: boolean;
 }
 
 function SkeletonCard() {
@@ -29,7 +30,7 @@ function SkeletonCard() {
   );
 }
 
-export default function ProductsGrid({ products, loading, page, onPageChange, emoji = "📦" }: Props) {
+export default function ProductsGrid({ products, loading, page, onPageChange, emoji = "📦", reserveMode = false }: Props) {
   const totalPages = Math.ceil(products.length / ITEMS_PER_PAGE);
   const paginated = products.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
 
@@ -40,7 +41,7 @@ export default function ProductsGrid({ products, loading, page, onPageChange, em
 
   if (loading) {
     return (
-      <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4 lg:gap-5">
+      <div className={`grid gap-3 sm:gap-4 lg:gap-5 ${reserveMode ? "grid-cols-1 sm:grid-cols-2 xl:grid-cols-3" : "grid-cols-2 sm:grid-cols-2 xl:grid-cols-3"}`}>
         {Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)}
       </div>
     );
@@ -77,7 +78,7 @@ export default function ProductsGrid({ products, loading, page, onPageChange, em
 
   return (
     <>
-      <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4 lg:gap-5">
+      <div className={`grid gap-3 sm:gap-4 lg:gap-5 ${reserveMode ? "grid-cols-1 sm:grid-cols-2 xl:grid-cols-3" : "grid-cols-2 sm:grid-cols-2 xl:grid-cols-3"}`}>
         <AnimatePresence mode="wait">
           {paginated.map((p, i) => (
             <motion.div
@@ -87,7 +88,7 @@ export default function ProductsGrid({ products, loading, page, onPageChange, em
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.3, delay: i * 0.03 }}
             >
-              <ProductCard product={p} />
+              <ProductCard product={p} reserveMode={reserveMode} />
             </motion.div>
           ))}
         </AnimatePresence>

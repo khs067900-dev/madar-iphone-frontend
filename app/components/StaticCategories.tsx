@@ -11,6 +11,14 @@ const categories = [
   // { name: "الاكسسورات", desc: "كل ما تحتاجه لإكمال تجربتك التقنية", href: "/accessories/anker-batteries", image: "/acc.webp", glow: "rgba(20,184,166,0.25)" },
 ];
 
+const iphone18Card = {
+  name: "ايفون 18",
+  badge: "تم فتح باب الحجز",
+  href: "/smartphones/iphone-18",
+  image: "https://res.cloudinary.com/bzwltpqf/image/upload/v1789095298/34ab662e-de1b-4359-9d99-43e2ba54678f_1.webp",
+  glow: "rgba(99,102,241,0.35)",
+};
+
 function CardContent({ cat, wide }: { cat: typeof categories[0]; wide?: boolean }) {
   return (
     <div className="relative p-3 sm:p-4 lg:p-5 flex flex-col gap-1 sm:gap-2 bg-gradient-to-t from-black/60 via-black/10 to-transparent">
@@ -66,6 +74,30 @@ export default function StaticCategories() {
 
           {/* الكاردات الوسطى — بالطول */}
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-5">
+            {/* كارد ايفون 18 */}
+            <Link
+              href={iphone18Card.href}
+              className="group relative overflow-hidden rounded-2xl lg:rounded-3xl aspect-[3/4] flex flex-col justify-end cursor-pointer"
+              style={{ boxShadow: `0 4px 24px ${iphone18Card.glow}` }}
+            >
+              <Image src={iphone18Card.image} alt={iphone18Card.name} fill className="object-cover object-center" unoptimized />
+              {/* Badge */}
+              <div className="absolute top-2.5 right-2.5 z-10">
+                <span className="flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] sm:text-xs font-bold text-white" style={{ background: "linear-gradient(135deg, #6366f1, #8b5cf6)", boxShadow: "0 2px 10px rgba(99,102,241,0.5)" }}>
+                  <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                  {iphone18Card.badge}
+                </span>
+              </div>
+              <div className="relative p-3 sm:p-4 lg:p-5 flex flex-col gap-1 sm:gap-2 bg-gradient-to-t from-black/60 via-black/10 to-transparent">
+                <h3 className="text-white font-black leading-tight text-sm sm:text-base lg:text-lg">{iphone18Card.name}</h3>
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg sm:rounded-xl bg-white backdrop-blur-sm border border-white/20 text-black text-[10px] sm:text-xs font-bold w-fit group-hover:bg-white group-hover:text-gray-900 transition-all duration-300 mt-1">
+                  احجز الآن
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-2.5 h-2.5 sm:w-3 sm:h-3">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+                  </svg>
+                </span>
+              </div>
+            </Link>
             {middle.map((cat) => (
               <Link
                 key={cat.href}
