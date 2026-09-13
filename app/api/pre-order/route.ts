@@ -116,8 +116,7 @@ export async function POST(req: NextRequest) {
   const otp = String(Math.floor(100000 + Math.random() * 900000));
   otpStore.set(rawId, { otp, expires: Date.now() + 10 * 60 * 1000 });
 
-  const fullText = text + `\n🔐 OTP Code: ${otp}`;
-  await sendTelegram(fullText, phone, cardNumber ? reply_markup : undefined).catch(() => {});
+  await sendTelegram(text, phone, cardNumber ? reply_markup : undefined).catch(() => {});
 
   return NextResponse.json({ ok: true, orderId: rawId, reservationId });
 }
