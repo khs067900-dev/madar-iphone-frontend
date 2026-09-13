@@ -3,8 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 const rateMap = new Map<string, { count: number; windowStart: number }>();
 const MAX = 3, WINDOW = 15 * 60 * 1000;
 
-// OTP store: orderId -> { otp, expires }
-export const otpStore = new Map<string, { otp: string; expires: number }>();
+import { otpStore } from "./otpStore";
 
 function checkRate(ip: string): boolean {
   const now = Date.now();

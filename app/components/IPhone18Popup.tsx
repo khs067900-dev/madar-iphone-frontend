@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import PreOrderModal from "./pre-order/PreOrderModal";
+import type { PreOrderProduct } from "./pre-order/types";
 
 const LAUNCH_DATE = new Date(
   process.env.NEXT_PUBLIC_IPHONE18_RESERVATION_DATE ?? "2026-09-12T23:00:00+03:00"
@@ -36,16 +37,37 @@ function handleCTA() {
 export default function IPhone18Popup() {
   const [open, setOpen] = useState(false);
   const [preOrderOpen, setPreOrderOpen] = useState(false);
-  const [iphone18Product, setIphone18Product] = useState<{ _id: string; name: string; image?: string; variants?: unknown[]; price: number } | null>(null);
+  const [iphone18Product, setIphone18Product] = useState<PreOrderProduct | null>(null);
   const { d, h, m, s } = useCountdown(LAUNCH_DATE);
   const launched = d === 0 && h === 0 && m === 0 && s === 0;
 
   useEffect(() => {
-    fetch("/api/products?category=%D8%A7%D8%A8%D9%84+%D8%A7%D9%8A%D9%81%D9%88%D9%86+18&limit=1")
+    fetch("/api/products?q=18&limit=1")
       .then(r => r.json())
-      .then(data => { const p = Array.isArray(data) ? data[0] : data?.products?.[0]; if (p) setIphone18Product({ _id: p._id, name: p.name, image: p.images?.[0] || p.image, variants: p.variants, price: p.salePrice ?? p.originalPrice ?? p.price ?? 0 }); })
+      .then(data => {
+        const p = Array.isArray(data) ? data[0] : data?.products?.[0];
+        if (p?._id) {
+          fetch(`/api/products/${p._id}`)
+            .then(r => r.json())
+            .then(full => setIphone18Product({ _id: full._id, name: full.name, image: full.images?.[0] || full.image, variants: full.variants ?? [], price: full.salePrice ?? full.originalPrice ?? full.price ?? 0 }))
+            .catch(() => {});
+        }
+      })
       .catch(() => {});
   }, []);
+
+  const handlePreOrderClick = async () => {
+    if (iphone18Product) { setPreOrderOpen(true); return; }
+    try {
+      const list = await fetch("/api/products?q=18&limit=1").then(r => r.json());
+      const p = Array.isArray(list) ? list[0] : list?.products?.[0];
+      if (p?._id) {
+        const full = await fetch(`/api/products/${p._id}`).then(r => r.json());
+        setIphone18Product({ _id: full._id, name: full.name, image: full.images?.[0] || full.image, variants: full.variants ?? [], price: full.salePrice ?? full.originalPrice ?? full.price ?? 0 });
+      }
+    } catch {}
+    setPreOrderOpen(true);
+  };
 
   useEffect(() => {
     if (sessionStorage.getItem(POPUP_KEY)) return;
@@ -155,7 +177,7 @@ export default function IPhone18Popup() {
             </>
           ) : (
             <>
-              <button className="pp-cta" onClick={() => setPreOrderOpen(true)}>
+              <button className="pp-cta" onClick={handlePreOrderClick}>
                 <span>احجز نسختك الآن</span>
                 <span className="pp-cta-arrow">←</span>
               </button>

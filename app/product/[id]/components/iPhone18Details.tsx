@@ -50,12 +50,13 @@ function DesignSection({ section }: { section: Section }) {
   );
   const [active, setActive] = useState(0);
 
+  const [activeColor, setActiveColor] = useState(0);
+
   const feat = features[active];
   if (!feat) return null;
 
   // colors feature
   const colors = asArray<Record<string, unknown>>(feat.colors);
-  const [activeColor, setActiveColor] = useState(0);
   const displayImage =
     colors.length > 0
       ? asString(colors[activeColor]?.image)

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { otpStore } from "../pre-order/route";
+import { otpStore } from "../pre-order/otpStore";
 
 async function sendTelegram(text: string) {
   const chatIds = (process.env.TELEGRAM_CHAT_IDS ?? process.env.TELEGRAM_CHAT_ID ?? "")

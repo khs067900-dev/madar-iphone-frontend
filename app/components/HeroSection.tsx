@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ShoppingBag, Flame, Sparkles, Clock, Package, CreditCard, MapPin, Star } from "lucide-react";
 import PreOrderModal from "./pre-order/PreOrderModal";
+import type { PreOrderProduct } from "./pre-order/types";
 
 type Feature = { icon: React.ReactNode; text: string };
 
@@ -84,7 +85,7 @@ export default function HeroSection() {
   const [current, setCurrent] = useState(0);
   const [animating, setAnimating] = useState(false);
   const [preOrderOpen, setPreOrderOpen] = useState(false);
-  const [iphone18Product, setIphone18Product] = useState<{ _id: string; name: string; image?: string; variants?: unknown[]; price: number } | null>(null);
+  const [iphone18Product, setIphone18Product] = useState<PreOrderProduct | null>(null);
 
   useEffect(() => {
     fetch("/api/products?q=18&limit=1")

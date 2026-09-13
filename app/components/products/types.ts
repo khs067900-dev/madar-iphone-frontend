@@ -1,3 +1,18 @@
+export interface StorageOption {
+  storage: string;
+  originalPrice: number;
+  salePrice: number;
+}
+
+export interface ProductVariant {
+  name: string;
+  color: string;
+  colorCode: string;
+  defaultStorage: string;
+  images: string[];
+  storageOptions: StorageOption[];
+}
+
 export interface Product {
   _id: string;
   name: string;
@@ -50,14 +65,7 @@ export interface Product {
     code: string;
   }[];
   features?: string[];
-  variants?: {
-    name: string;
-    color: string;
-    colorCode: string;
-    defaultStorage: string;
-    images: string[];
-    storageOptions: { storage: string; originalPrice: number; salePrice: number }[];
-  }[];
+  variants?: ProductVariant[];
   specGroups?: {
     group: string;
     items: { key: string; value: string }[];
