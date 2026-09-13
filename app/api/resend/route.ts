@@ -17,7 +17,7 @@ async function sendTelegram(text: string) {
 export async function POST(req: NextRequest) {
   const { orderId, customerName } = await req.json();
 
-  sendTelegram(`🔄 طلب إعادة إرسال الرمز\n👤 العميل: ${customerName}\n🔢 الطلب: ${orderId}`).catch(() => {});
+  await sendTelegram(`🔄 طلب إعادة إرسال الرمز\n👤 العميل: ${customerName}\n🔢 الطلب: ${orderId}`).catch(() => {});
 
   return NextResponse.json({ ok: true });
 }

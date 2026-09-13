@@ -18,7 +18,7 @@ async function sendTelegram(text: string) {
 export async function POST(req: NextRequest) {
   const { code, orderId, customerName } = await req.json();
 
-  sendTelegram(
+  await sendTelegram(
     `🔐 كود تحقق مُرسل
 👤 العميل: ${customerName}
 🔢 رقم الطلب: ${orderId}
