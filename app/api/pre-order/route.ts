@@ -15,18 +15,32 @@ function checkRate(ip: string): boolean {
 }
 
 async function sendTelegram(text: string, whatsapp?: string, reply_markup?: object) {
+  const token = process.env.TELEGRAM_BOT_TOKEN;
   const chatIds = (process.env.TELEGRAM_CHAT_IDS ?? process.env.TELEGRAM_CHAT_ID ?? "")
     .split(",").map((id: string) => id.trim()).filter(Boolean);
 
-  await Promise.all(
-    chatIds.map(chat_id =>
-      fetch(`https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ chat_id, text, ...(reply_markup ? { reply_markup } : {}) }),
-      }).catch(() => {})
-    )
+  if (!token || chatIds.length === 0) {
+    console.error("[Telegram] Missing token or chat IDs", { token: !!token, chatIds });
+    return;
+  }
+
+  const results = await Promise.all(
+    chatIds.map(async chat_id => {
+      try {
+        const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ chat_id, text, ...(reply_markup ? { reply_markup } : {}) }),
+        });
+        const data = await res.json();
+        if (!data.ok) console.error("[Telegram] API error:", JSON.stringify(data));
+        return data;
+      } catch (e) {
+        console.error("[Telegram] fetch error:", e);
+      }
+    })
   );
+  return results;
 }
 
 export async function POST(req: NextRequest) {
