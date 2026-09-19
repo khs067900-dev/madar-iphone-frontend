@@ -23,7 +23,7 @@ export default function IPhone18Popup() {
         <span className="text-gray-300 hidden sm:inline">— متاح الآن للطلب الفوري</span>
       </span>
       <div className="flex items-center gap-3 shrink-0">
-        <Link href="/smartphones" className="bg-white text-black text-xs font-bold px-3 py-1 rounded-full hover:bg-gray-200 transition">
+        <Link href="/smartphones/iphone-18-pro-max" className="bg-white text-black text-xs font-bold px-3 py-1 rounded-full hover:bg-gray-200 transition">
           اطلب الآن
         </Link>
         <button onClick={dismiss} className="text-gray-400 hover:text-white transition text-base leading-none">✕</button>
