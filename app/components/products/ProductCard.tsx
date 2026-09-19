@@ -22,8 +22,14 @@ const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 const resolveImg = (src: string) =>
   src.startsWith("http") ? src : `${API}${src.startsWith("/") ? src : "/" + src}`;
 
+/* استخرج الـ defaultStorage من أول variant */
+function getDefaultStorage(product: Product): string | null {
+  return product.variants?.[0]?.defaultStorage ?? null;
+}
+
 export default function ProductCard({ product, priority = false, reserveMode = false }: { product: Product; priority?: boolean; reserveMode?: boolean }) {
   const { name, discountPercent = 0, brand, color, storage, inStock, installment, freeDelivery, warrantyYears } = product;
+  const defaultStorage = getDefaultStorage(product);
   const image = product.images?.[0] || product.image;
   const resolvedImage = image ? resolveImg(image) : undefined;
   const originalPrice = product.originalPrice || product.price || 0;
@@ -144,15 +150,20 @@ export default function ProductCard({ product, priority = false, reserveMode = f
           <div className="flex flex-col flex-1 px-3.5 pt-3 pb-3.5 gap-2.5">
 
             {/* Brand row */}
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1.5 flex-wrap">
               {brand && (
                 <span className="text-[9px] font-black text-teal-300 bg-teal-900/50 border border-teal-500/40 px-1.5 py-0.5 rounded-lg uppercase tracking-wider leading-none">
                   {brand}
                 </span>
               )}
-              {storage && (
+              {storage && !defaultStorage && (
                 <span className="text-[9px] font-semibold text-gray-300 bg-white/10 px-1.5 py-0.5 rounded-lg leading-none">
                   {storage}
+                </span>
+              )}
+              {defaultStorage && (
+                <span className="text-[9px] font-black text-violet-300 bg-violet-900/40 border border-violet-400/40 px-2 py-0.5 rounded-lg leading-none">
+                  {defaultStorage}
                 </span>
               )}
               {color && (
