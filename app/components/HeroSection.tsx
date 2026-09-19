@@ -3,8 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ShoppingBag, Flame, Sparkles, Clock, Package, CreditCard, MapPin, Star } from "lucide-react";
-import PreOrderModal from "./pre-order/PreOrderModal";
-import type { PreOrderProduct } from "./pre-order/types";
+
 
 type Feature = { icon: React.ReactNode; text: string };
 
@@ -68,12 +67,12 @@ const slides: Slide[] = [
   {
     img: "https://res.cloudinary.com/bzwltpqf/image/upload/v1789126696/deec23e7-4e69-4b8f-8b56-8900ec23bba0.webp",
     badgeIcon: <MapPin size={13} />,
-    badge: "قريبًا في المملكة 🇸🇦",
-    title: "iPhone 18",
-    titleSpan: "لحظة تستحق أن تكون من أوائلها",
-    desc: "الجيل الجديد على وشك الوصول — احجز نسختك مسبقًا وكن ضمن أوائل من يحصلون على iPhone 18 فور توفره · بدفعة أولى رمزية · استلم فور الإطلاق · أولوية الحجز المبكر",
-    btnHref: "/iphone-18-preorder",
-    btnText: "احجز نسختك الآن ←",
+    badge: "متوفر الآن في المملكة 🇸🇦",
+    title: "iPhone 18 Pro Max",
+    titleSpan: "وصل أخيراً — اطلب الآن",
+    desc: "الجيل الجديد من Apple متوفر الآن · توصيل خلال 24 ساعة · ضمان سنتين · أولوية للطلبات الأولى",
+    btnHref: "/smartphones/iphone-18-pro-max",
+    btnText: "اطلب الآن ←",
     accentColor: "#65E0CD",
     accentRgb: "101,224,205",
     features: null,
@@ -84,44 +83,6 @@ const slides: Slide[] = [
 export default function HeroSection() {
   const [current, setCurrent] = useState(0);
   const [animating, setAnimating] = useState(false);
-  const [preOrderOpen, setPreOrderOpen] = useState(false);
-  const [iphone18Product, setIphone18Product] = useState<PreOrderProduct | null>(null);
-
-  useEffect(() => {
-    fetch("/api/products?q=18&limit=1")
-      .then(r => r.json())
-      .then(data => {
-        const p = Array.isArray(data) ? data[0] : data?.products?.[0];
-        if (p?._id) {
-          fetch(`/api/products/${p._id}`)
-            .then(r => r.json())
-            .then(full => setIphone18Product({
-              _id: full._id,
-              name: full.name,
-              image: full.images?.[0] || full.image,
-              variants: full.variants ?? [],
-              price: full.salePrice ?? full.originalPrice ?? full.price ?? 0,
-            }))
-            .catch(() => {});
-        }
-      })
-      .catch(() => {});
-  }, []);
-
-  const handlePreOrderClick = async () => {
-    if (iphone18Product) { setPreOrderOpen(true); return; }
-    try {
-      const list = await fetch("/api/products?q=18&limit=1").then(r => r.json());
-      const p = Array.isArray(list) ? list[0] : list?.products?.[0];
-      if (p?._id) {
-        const full = await fetch(`/api/products/${p._id}`).then(r => r.json());
-        const prod = { _id: full._id, name: full.name, image: full.images?.[0] || full.image, variants: full.variants ?? [], price: full.salePrice ?? full.originalPrice ?? full.price ?? 0 };
-        setIphone18Product(prod);
-      }
-    } catch {}
-    setPreOrderOpen(true);
-  };
-
   const slideTo = useCallback((index: number) => {
     if (index === current || animating) return;
     setAnimating(true);
@@ -176,9 +137,9 @@ export default function HeroSection() {
         )}
         <div className="hero-actions">
           {s.singleBtn ? (
-            <button onClick={handlePreOrderClick} className="btn-primary">
+            <Link href={s.btnHref} className="btn-primary">
               {s.btnText}
-            </button>
+            </Link>
           ) : (
             <>
               <Link href={s.btnHref} className="btn-primary">{s.btnText}</Link>
@@ -394,11 +355,6 @@ export default function HeroSection() {
       `}</style>
     </section>
 
-    <PreOrderModal
-      open={preOrderOpen}
-      onClose={() => setPreOrderOpen(false)}
-      product={iphone18Product ?? { _id: "", name: "iPhone 18", image: s.img, variants: [], price: 0 }}
-    />
     </>
   );
 }

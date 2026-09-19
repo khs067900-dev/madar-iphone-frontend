@@ -120,6 +120,24 @@ export const slugConfigs: Record<string, SlugConfig> = {
     parentHref: "/smartphones",
     filters: { category: "ابل ايفون 18" },
   },
+  "iphone-18-pro-max": {
+    label: "آيفون 18 برو ماكس",
+    parentLabel: "آيفون 18",
+    parentHref: "/smartphones/iphone-18",
+    filters: { category: "ابل ايفون 18 برو ماكس" },
+  },
+  "iphone-18-pro": {
+    label: "آيفون 18 برو",
+    parentLabel: "آيفون 18",
+    parentHref: "/smartphones/iphone-18",
+    filters: { category: "ابل ايفون 18 برو " },
+  },
+  "iphone-18-standard": {
+    label: "آيفون 18 عادي",
+    parentLabel: "آيفون 18",
+    parentHref: "/smartphones/iphone-18",
+    filters: { category: "ابل ايفون 18 دو" },
+  },
   "apple-only": {
     label: "فقط آبل",
     parentLabel: "الهواتف الذكية",

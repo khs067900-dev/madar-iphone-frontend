@@ -8,6 +8,11 @@ const BACKEND = process.env.BACKEND_URL || "http://localhost:5000";
 // Map category names to their page hrefs
 const categoryHrefMap: Record<string, string> = {
   "الهواتف الذكية": "/smartphones",
+  "ابل ايفون 18 برو ماكس": "/smartphones/iphone-18-pro-max",
+  "ابل ايفون 18 برو ": "/smartphones/iphone-18-pro",
+  "ابل ايفون 18 برو": "/smartphones/iphone-18-pro",
+  "ابل ايفون 18 دو": "/smartphones/iphone-18-standard",
+  "ابل ايفون 18": "/smartphones/iphone-18",
   "ابل ايفون 17 برو ماكس": "/smartphones/iphone-17-pro-max",
   "أبل آيفون 17 برو ماكس": "/smartphones/iphone-17-pro-max",
   "ابل ايفون 17 برو": "/smartphones/iphone-17-pro",

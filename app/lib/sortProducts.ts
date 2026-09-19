@@ -61,8 +61,8 @@ function parseStorage(s?: string, name?: string): number {
 
 export function sortProducts(products: Product[]): Product[] {
   return [...products].sort((a, b) => {
-    const storageDiff = parseStorage(a.storage, a.name) - parseStorage(b.storage, b.name);
-    if (storageDiff !== 0) return storageDiff;
-    return colorPriority(a.color, a.name) - colorPriority(b.color, b.name);
+    const priceA = (a.salePrice && a.salePrice > 0 ? a.salePrice : a.originalPrice) ?? a.price ?? 0;
+    const priceB = (b.salePrice && b.salePrice > 0 ? b.salePrice : b.originalPrice) ?? b.price ?? 0;
+    return priceA - priceB;
   });
 }

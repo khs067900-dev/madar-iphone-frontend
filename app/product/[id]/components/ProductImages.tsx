@@ -22,10 +22,10 @@ export default function ProductImages({ images: rawImages, name, discountPercent
   if (images.length === 0) return null;
 
   return (
-    <div className="flex flex-col gap-3 lg:sticky lg:top-[80px]">
-      {/* Hero Image with overlay */}
+    <div className="flex flex-col gap-2 sm:gap-3 lg:sticky lg:top-[72px]">
+      {/* ── Main image ── */}
       <div
-        className="relative rounded-3xl overflow-hidden group"
+        className="relative rounded-2xl sm:rounded-3xl overflow-hidden bg-white/3 border border-white/8 group"
         onTouchStart={(e) => { touchStart.current = e.touches[0].clientX; }}
         onTouchEnd={(e) => {
           const diff = touchStart.current - e.changedTouches[0].clientX;
@@ -35,33 +35,33 @@ export default function ProductImages({ images: rawImages, name, discountPercent
         <AnimatePresence mode="wait">
           <motion.div
             key={selected}
-            initial={{ opacity: 0, scale: 1.04 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.97 }}
-            transition={{ duration: 0.45 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            /* aspect-[3/4] on mobile → square on desktop */
             className="relative w-full aspect-[3/4] sm:aspect-square"
           >
             <Image
               src={images[selected]}
               alt={name}
               fill
-              className="object-cover"
+              /* scale قليل — كانت scale-150 */
+              className="object-contain p-4 sm:p-6"
               priority
               sizes="(max-width: 1024px) 100vw, 50vw"
             />
-            {/* gradient overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
           </motion.div>
         </AnimatePresence>
 
         {/* Discount badge */}
         {discountPercent > 0 && (
           <motion.div
-            initial={{ scale: 0, rotate: -12 }}
-            animate={{ scale: 1, rotate: 0 }}
-            className="absolute top-4 right-4 z-10"
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            className="absolute top-3 right-3 z-10"
           >
-            <span className="bg-red-500 text-white text-xs font-black px-3 py-1.5 rounded-full shadow-lg">
+            <span className="bg-red-500 text-white text-[10px] sm:text-xs font-black px-2.5 py-1 rounded-full shadow-lg">
               خصم {discountPercent}%
             </span>
           </motion.div>
@@ -69,30 +69,23 @@ export default function ProductImages({ images: rawImages, name, discountPercent
 
         {/* Counter */}
         {images.length > 1 && (
-          <div className="absolute top-4 left-4 z-10 bg-black/50 backdrop-blur-sm text-white px-2.5 py-1 rounded-full text-xs font-bold border border-white/20">
+          <div className="absolute top-3 left-3 z-10 bg-black/40 backdrop-blur-sm text-white px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-bold border border-white/15">
             {selected + 1} / {images.length}
           </div>
         )}
 
-        {/* Product name on image */}
-        <div className="absolute bottom-0 right-0 left-0 z-10 p-5">
-          <p className="text-white font-black text-base sm:text-lg leading-snug drop-shadow-lg line-clamp-2">
-            {name}
-          </p>
-        </div>
-
-        {/* Prev/Next arrows on desktop */}
+        {/* Prev / Next arrows — desktop only */}
         {images.length > 1 && (
           <>
             <button
               onClick={() => goTo(selected - 1)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-black/40 backdrop-blur-sm text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-lg font-bold"
+              className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 z-10 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-black/40 backdrop-blur-sm text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-base font-bold border border-white/10"
             >
               ›
             </button>
             <button
               onClick={() => goTo(selected + 1)}
-              className="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-black/40 backdrop-blur-sm text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-lg font-bold"
+              className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 z-10 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-black/40 backdrop-blur-sm text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-base font-bold border border-white/10"
             >
               ‹
             </button>
@@ -101,13 +94,13 @@ export default function ProductImages({ images: rawImages, name, discountPercent
 
         {/* Dots */}
         {images.length > 1 && (
-          <div className="absolute bottom-14 left-1/2 -translate-x-1/2 z-10 flex items-center gap-1.5">
+          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 flex items-center gap-1.5">
             {images.map((_, i) => (
               <button
                 key={i}
                 onClick={() => setSelected(i)}
                 className={`rounded-full transition-all duration-300 ${
-                  i === selected ? "w-5 h-2 bg-teal-400" : "w-2 h-2 bg-white/40"
+                  i === selected ? "w-4 h-1.5 sm:w-5 sm:h-2 bg-teal-400" : "w-1.5 h-1.5 bg-white/35"
                 }`}
               />
             ))}
@@ -115,22 +108,21 @@ export default function ProductImages({ images: rawImages, name, discountPercent
         )}
       </div>
 
-      {/* Thumbnails */}
+      {/* ── Thumbnails ── */}
       {images.length > 1 && (
-        <div className="flex gap-2 overflow-x-auto scrollbar-hide px-1">
+        <div className="flex gap-1.5 sm:gap-2 overflow-x-auto scrollbar-hide px-0.5">
           {images.map((img, i) => (
             <motion.button
               key={i}
               whileTap={{ scale: 0.93 }}
               onClick={() => setSelected(i)}
-              className={`relative w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden shrink-0 transition-all duration-300 ${
+              className={`relative w-14 h-14 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl overflow-hidden shrink-0 border transition-all duration-300 bg-white/3 ${
                 i === selected
-                  ? "ring-2 ring-teal-400 ring-offset-1 ring-offset-transparent"
-                  : "opacity-50 hover:opacity-80"
+                  ? "border-teal-400/70 shadow-sm shadow-teal-500/20"
+                  : "border-white/8 opacity-50 hover:opacity-80 hover:border-white/20"
               }`}
             >
-              <Image src={img} alt="" fill className="object-cover" sizes="80px" />
-              {i === selected && <div className="absolute inset-0 bg-teal-400/10" />}
+              <Image src={img} alt="" fill className="object-contain p-1.5" sizes="64px" />
             </motion.button>
           ))}
         </div>

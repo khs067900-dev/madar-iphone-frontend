@@ -13,7 +13,7 @@ const categories = [
 
 const iphone18Card = {
   name: "ايفون 18",
-  badge: "تم فتح باب الحجز",
+  badge: "جاهز للطلب الآن",
   href: "/smartphones/iphone-18",
   image: "https://res.cloudinary.com/bzwltpqf/image/upload/v1789095298/34ab662e-de1b-4359-9d99-43e2ba54678f_1.webp",
   glow: "rgba(99,102,241,0.35)",

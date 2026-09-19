@@ -3,17 +3,14 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { IoArrowForward, IoShareSocial, IoHomeOutline, IoChevronBack, IoCalendarOutline } from "react-icons/io5";
+import { IoArrowForward, IoShareSocial, IoHomeOutline, IoChevronBack } from "react-icons/io5";
 import Link from "next/link";
 import type { Product } from "../../components/products/types";
 import { useCartStore } from "../../store/cartStore";
 import ProductImages from "./components/ProductImages";
 import ProductInfo from "./components/ProductInfo";
 import ProductDetails from "./components/ProductDetails";
-import IPhone18Details from "./components/iPhone18Details";
 import AnimatedBackground from "../../components/AnimatedBackground";
-import { isIPhone18PreOrder } from "../../lib/usePreOrderAvailability";
-import PreOrderModal from "../../components/pre-order/PreOrderModal";
 
 
 const BACKEND = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
@@ -24,7 +21,6 @@ export default function ProductPageClient({ id }: { id: string }) {
   const [loading, setLoading] = useState(true);
   const [addedToCart, setAddedToCart] = useState(false);
   const [variantImages, setVariantImages] = useState<string[] | null>(null);
-  const [preOrderOpen, setPreOrderOpen] = useState(false);
   const addItem = useCartStore((s) => s.addItem);
 
   useEffect(() => {
@@ -41,8 +37,8 @@ export default function ProductPageClient({ id }: { id: string }) {
         <AnimatedBackground />
         <main className="min-h-screen" dir="rtl">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-24 pb-12">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16">
-              <div className="aspect-square bg-white/5 rounded-3xl animate-pulse" />
+            <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,420px)_1fr] gap-6 lg:gap-12">
+              <div className="aspect-square max-w-[420px] bg-white/5 rounded-3xl animate-pulse" />
               <div className="space-y-6 pt-8">
                 <div className="h-4 w-24 bg-white/10 rounded-full animate-pulse" />
                 <div className="h-8 w-3/4 bg-white/10 rounded-full animate-pulse" />
@@ -76,7 +72,6 @@ export default function ProductPageClient({ id }: { id: string }) {
     } catch {}
   };
 
-  const isPreOrder = product ? isIPhone18PreOrder(product.name) : false;
 
   return (
     <>
@@ -123,21 +118,22 @@ export default function ProductPageClient({ id }: { id: string }) {
 
       {/* ─── Main Content ─── */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-8 sm:pt-12">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16">
-          {/* Left: Images */}
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,420px)_1fr] gap-6 lg:gap-12 items-start">
+          {/* Left: Images — limited width */}
           <motion.div
-            initial={{ opacity: 0, x: -40 }}
+            initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+            className="w-full lg:max-w-[420px]"
           >
             <ProductImages images={allImages} name={product.name} discountPercent={product.discountPercent} />
           </motion.div>
 
           {/* Right: Info */}
           <motion.div
-            initial={{ opacity: 0, x: 40 }}
+            initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
+            transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
           >
             <ProductInfo
               product={product}
@@ -145,7 +141,6 @@ export default function ProductPageClient({ id }: { id: string }) {
               onAddToCart={(qty) => { addItem(product, qty); setAddedToCart(true); }}
               onBuyNow={(qty) => { addItem(product, qty); router.push("/cart"); }}
               onVariantChange={(imgs) => setVariantImages(imgs)}
-              onPreOrder={isPreOrder ? () => setPreOrderOpen(true) : undefined}
             />
           </motion.div>
         </div>
@@ -157,22 +152,16 @@ export default function ProductPageClient({ id }: { id: string }) {
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.6 }}
         >
-          {product.sections && product.sections.length > 0 ? (
-            <IPhone18Details
-              description={product.description}
-              specGroups={product.specGroups}
-              sections={product.sections}
-            />
-          ) : (
-            <ProductDetails
+          <ProductDetails
               description={product.description}
               specs={product.specs}
               gallery={product.gallery}
               specifications={product.specifications}
+              specGroups={product.specGroups}
+              sections={product.sections}
               rating={product.rating}
               reviews={product.reviews}
             />
-          )}
         </motion.div>
       </div>
 
@@ -195,16 +184,7 @@ export default function ProductPageClient({ id }: { id: string }) {
                   <span className="text-[11px] font-bold text-white/50">ر.س</span>
                 </div>
               </div>
-              {product.category === "ابل ايفون 18" ? (
-                <motion.button
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => setPreOrderOpen(true)}
-                  className="bg-gradient-to-r from-teal-500 to-emerald-500 text-white font-bold text-sm px-7 py-3.5 rounded-2xl shadow-lg shadow-teal-500/30 flex items-center gap-2"
-                >
-                  <IoCalendarOutline size={16} />
-                  احجز الآن
-                </motion.button>
-              ) : !addedToCart ? (
+              {!addedToCart ? (
                 <motion.button
                   whileTap={{ scale: 0.95 }}
                   onClick={() => { addItem(product, 1); setAddedToCart(true); }}
@@ -226,20 +206,6 @@ export default function ProductPageClient({ id }: { id: string }) {
         </motion.div>
       </AnimatePresence>
 
-      {/* ─── Pre-Order Modal ─── */}
-      {isPreOrder && (
-        <PreOrderModal
-          open={preOrderOpen}
-          onClose={() => setPreOrderOpen(false)}
-          product={{
-            _id: product._id,
-            name: product.name,
-            image: product.image,
-            variants: product.variants,
-            price: product.originalPrice ?? product.salePrice ?? 0,
-          }}
-        />
-      )}
     </main>
     </>
   );
