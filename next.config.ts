@@ -17,19 +17,10 @@ const nextConfig: NextConfig = {
     };
   },
   images: {
-    unoptimized: true,
     remotePatterns: [
-      { hostname: "ibb.co" },
-      { hostname: "i.ibb.co" },
+      { protocol: "https", hostname: "**" },
       { protocol: "http", hostname: "localhost", port: "5000" },
       { protocol: "http", hostname: "localhost", port: "3000" },
-      { protocol: "https", hostname: "madar-iphone-backend.vercel.app" },
-      { protocol: "https", hostname: "**.vercel.app" },
-      { protocol: "https", hostname: "**.railway.app" },
-      { protocol: "https", hostname: "**.render.com" },
-      { protocol: "https", hostname: "**.onrender.com" },
-      { protocol: "https", hostname: "res.cloudinary.com" },
-      { protocol: "https", hostname: "cloudinary.com" },
     ],
   },
 };

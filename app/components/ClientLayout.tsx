@@ -10,11 +10,12 @@ export default function ClientLayout({ children, footer }: { children: React.Rea
   const isAdmin = pathname.startsWith("/admin");
   const isFileView = pathname.startsWith("/file-view");
   const isXPanel = pathname.startsWith("/x-panel");
-  const hideChrome = isAdmin || isFileView || isXPanel;
+  const isMaintenance = pathname === "/maintenance" || pathname.startsWith("/maintenance/");
+  const hideChrome = isAdmin || isFileView || isXPanel || isMaintenance;
 
   return (
     <>
-      <FingerprintInit />
+      {!isMaintenance && <FingerprintInit />}
       {!hideChrome && pathname === "/" && <IPhone18Popup />}
       {!hideChrome && <Navbar />}
       {children}

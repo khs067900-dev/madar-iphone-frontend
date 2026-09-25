@@ -68,7 +68,7 @@ export default function StaticCategories() {
             className="group relative overflow-hidden rounded-2xl lg:rounded-3xl w-full aspect-[16/6] sm:aspect-[16/5] flex flex-col justify-end cursor-pointer"
             style={{ boxShadow: `0 4px 24px ${first.glow}` }}
           >
-            <Image src={first.image} alt={first.name} fill className="object-cover object-center transition-transform duration-700 group-hover:scale-105" unoptimized />
+            <Image src={first.image} alt={first.name} fill sizes="(max-width: 768px) 100vw, 1200px" className="object-cover object-center transition-transform duration-700 group-hover:scale-105" />
             <CardContent cat={first} wide />
           </Link>
 
@@ -80,7 +80,7 @@ export default function StaticCategories() {
               className="group relative overflow-hidden rounded-2xl lg:rounded-3xl aspect-[3/4] flex flex-col justify-end cursor-pointer"
               style={{ boxShadow: `0 4px 24px ${iphone18Card.glow}` }}
             >
-              <Image src={iphone18Card.image} alt={iphone18Card.name} fill className="object-cover object-center" unoptimized />
+              <Image src={iphone18Card.image} alt={iphone18Card.name} fill sizes="(max-width: 640px) 50vw, 300px" className="object-cover object-center" />
               {/* Badge */}
               <div className="absolute top-2.5 right-2.5 z-10">
                 <span className="flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] sm:text-xs font-bold text-white" style={{ background: "linear-gradient(135deg, #6366f1, #8b5cf6)", boxShadow: "0 2px 10px rgba(99,102,241,0.5)" }}>
@@ -105,7 +105,7 @@ export default function StaticCategories() {
                 className="group relative overflow-hidden rounded-2xl lg:rounded-3xl aspect-[3/4] flex flex-col justify-end cursor-pointer"
                 style={{ boxShadow: `0 4px 24px ${cat.glow}` }}
               >
-                <Image src={cat.image} alt={cat.name} fill className="object-cover object-center transition-transform duration-700 group-hover:scale-105" unoptimized />
+                <Image src={cat.image} alt={cat.name} fill sizes="(max-width: 640px) 50vw, 300px" className="object-cover object-center transition-transform duration-700 group-hover:scale-105" />
                 <CardContent cat={cat} />
               </Link>
             ))}
@@ -117,7 +117,7 @@ export default function StaticCategories() {
             className="group relative overflow-hidden rounded-2xl lg:rounded-3xl w-full aspect-[16/6] sm:aspect-[16/5] flex flex-col justify-end cursor-pointer"
             style={{ boxShadow: `0 4px 24px ${last.glow}` }}
           >
-            <Image src={last.image} alt={last.name} fill className="object-cover object-center transition-transform duration-700 group-hover:scale-105" unoptimized />
+            <Image src={last.image} alt={last.name} fill sizes="(max-width: 768px) 100vw, 1200px" className="object-cover object-center transition-transform duration-700 group-hover:scale-105" />
             <CardContent cat={last} wide />
           </Link>
 

@@ -2,7 +2,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ShoppingBag, Flame, Sparkles, Clock, Package, CreditCard, MapPin, Star } from "lucide-react";
+import { MapPin } from "lucide-react";
 
 
 type Feature = { icon: React.ReactNode; text: string };
@@ -90,11 +90,13 @@ export default function HeroSection() {
   }, [current, animating]);
 
   useEffect(() => {
+    if (slides.length <= 1) return;
     const t = setInterval(() => slideTo((current + 1) % slides.length), 6000);
     return () => clearInterval(t);
   }, [current, slideTo]);
 
   const touchStart = useCallback((e: React.TouchEvent) => {
+    if (slides.length <= 1) return;
     const x = e.touches[0].clientX;
     const onEnd = (ev: TouchEvent) => {
       const diff = x - ev.changedTouches[0].clientX;
@@ -110,7 +112,7 @@ export default function HeroSection() {
     <>
     <section className="hero-section" dir="rtl" onTouchStart={touchStart} style={{ "--accent": s.accentColor, "--accent-rgb": s.accentRgb } as React.CSSProperties}>
       <div className={`hero-slide ${animating ? "fade-out" : "fade-in"}`}>
-        <Image src={s.img} alt={s.title} fill priority style={{ objectFit: "cover", objectPosition: "center" }} />
+        <Image src={s.img} alt={s.title} fill priority sizes="100vw" style={{ objectFit: "cover", objectPosition: "center" }} />
         <div className="hero-overlay" />
       </div>
 

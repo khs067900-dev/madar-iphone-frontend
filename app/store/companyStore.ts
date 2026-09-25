@@ -25,6 +25,8 @@ export const useCompanyStore = create<CompanyStore>((set) => ({
   website: "",
   details: "",
   fetchCompany: async () => {
+    const state = useCompanyStore.getState();
+    if (state.nameAr || state.logo) return;
     try {
       const res = await fetch(`/api/company`);
       const data = await res.json();

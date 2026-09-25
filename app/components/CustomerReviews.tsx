@@ -50,7 +50,11 @@ export default function CustomerReviews() {
 
   useEffect(() => {
     if (reviews.length <= 1) return;
-    const t = setInterval(() => setActiveIdx((i) => (i + 1) % reviews.length), 4500);
+    const t = setInterval(() => {
+      if (!document.hidden) {
+        setActiveIdx((i) => (i + 1) % reviews.length);
+      }
+    }, 4500);
     return () => clearInterval(t);
   }, [reviews.length]);
 
